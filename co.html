@@ -1,0 +1,164 @@
+<!-- (c) Copyright 2015 Andreas Huemer. All rights reserved. -->
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="utf-8">
+		<title>Codon optimisation</title>
+		<script>
+			// FIX: Tests.
+			var normaliseSequence = function(sequence) {
+				return sequence.replace(/\s/g, '');
+			};
+
+			var getAminoAcid = function(codon) {
+				// https://en.wikipedia.org/wiki/DNA_codon_table
+				// FIX: Better format (e.g. compressed format)?
+				// FIX: Test.
+				switch (codon) {
+					case "GCT":
+					case "GCC":
+					case "GCA":
+					case "GCG":
+						return "A";
+					case "TGT":
+					case "TGC":
+						return "C";
+					case "GAT":
+					case "GAC":
+						return "D";
+					case "GAA":
+					case "GAG":
+						return "E";
+					case "TTT":
+					case "TTC":
+						return "F";
+					case "GGT":
+					case "GGC":
+					case "GGA":
+					case "GGG":
+						return "G";
+					case "CAT":
+					case "CAC":
+						return "H";
+					case "ATT":
+					case "ATC":
+					case "ATA":
+						return "I";
+					case "AAA":
+					case "AAG":
+						return "K";
+					case "TTA":
+					case "TTG":
+					case "CTT":
+					case "CTC":
+					case "CTA":
+					case "CTG":
+						return "L";
+					case "ATG":
+						return "M";
+					case "AAT":
+					case "AAC":
+						return "N";
+					case "CCT":
+					case "CCC":
+					case "CCA":
+					case "CCG":
+						return "P";
+					case "CAA":
+					case "CAG":
+						return "Q";
+					case "CGT":
+					case "CGC":
+					case "CGA":
+					case "CGG":
+					case "AGA":
+					case "AGG":
+						return "R";
+					case "TCT":
+					case "TCC":
+					case "TCA":
+					case "TCG":
+					case "AGT":
+					case "AGC":
+						return "S";
+					case "ACT":
+					case "ACC":
+					case "ACA":
+					case "ACG":
+						return "T";
+					case "GTT":
+					case "GTC":
+					case "GTA":
+					case "GTG":
+						return "V";
+					case "TGG":
+						return "W";
+					case "TAT":
+					case "TAC":
+						return "Y";
+					case "TAA":
+					case "TGA":
+					case "TAG":
+						return ".";
+				}
+				return "?";
+			};
+
+			var getAminoAcids = function(sequence) {
+				// FIX: No mutations.
+				var ret = "";
+				var rest = sequence;
+				while (rest.length >= 3) {
+					ret = ret.concat(getAminoAcid(rest.substring(0, 3)));
+					rest = rest.substring(3);
+				}
+				return ret;
+			};
+
+			var getCodon = function(aminoAcid) {
+				// FIX: Return codon according to the probability that is proportional to the frequency in the frequency table.
+				switch (aminoAcid) {
+					case "A":
+						return "GCT";
+				}
+				return "???";
+			};
+
+			var getSequence = function(aminoAcids) {
+				// FIX: No mutations.
+				var ret = "";
+				for (i = 0; i < aminoAcids.length; i++) {
+					ret = ret.concat(getCodon(aminoAcids.charAt(i)));
+				}
+				return ret;
+			};
+
+			var optimise = function() {
+				sequence1 = document.getElementById("sequence1").value;
+				normalised1 = normaliseSequence(sequence1);
+				aminoAcids = getAminoAcids(normalised1);
+				document.getElementById("aminoAcids").value = aminoAcids;
+				document.getElementById("sequence2").value = getSequence(aminoAcids);
+			};
+		</script>
+  </head>
+
+	<body>
+	<p>Example:<br/>
+	ATGGTGAGCAAGGGCGAGGAGCTGTTCACCGGGGTGGTGCCCATCCTGGTCGAGCTGGACGGCGACGTAAACGGCCACAA GTTCAGCGTGTCCGGCGAGGGCGAGGGCGATGCCACCTACGGCAAGCTGACCCTGAAGTTCATCTGCACCACCGGCAAGC TGCCCGTGCCCTGGCCCACCCTCGTGACCACCTTCGGCTACGGCCTGCAGTGCTTCGCCCGCTACCCCGACCACATGAAG CAGCACGACTTCTTCAAGTCCGCCATGCCCGAAGGCTACGTCCAGGAGCGCACCATCTTCTTCAAGGACGACGGCAACTA CAAGACCCGCGCCGAGGTGAAGTTCGAGGGCGACACCCTGGTGAACCGCATCGAGCTGAAGGGCATCGACTTCAAGGAGG ACGGCAACATCCTGGGGCACAAGCTGGAGTACAACTACAACAGCCACAACGTCTATATCATGGCCGACAAGCAGAAGAAC GGCATCAAGGTGAACTTCAAGATCCGCCACAACATCGAGGACGGCAGCGTGCAGCTCGCCGACCACTACCAGCAGAACAC CCCCATCGGCGACGGCCCCGTGCTGCTGCCCGACAACCACTACCTGAGCTACCAGTCCGCCCTGAGCAAAGACCCCAACG AGAAGCGCGATCACATGGTCCTGCTGGAGTTCGTGACCGCCGCCGGGATCACTCTCGGCATGGACGAGCTGTACAAGTAA
+	</p>
+
+	<p>
+		Original sequence:&nbsp;<input id="sequence1" onkeyup="optimise()">
+	</p>
+
+	<p>
+		Amino acids:&nbsp;<input id="aminoAcids">
+	</p>
+
+	<p>
+		Optimised sequence:&nbsp;<input id="sequence2">
+	</p>
+
+	</body>
+</html>
