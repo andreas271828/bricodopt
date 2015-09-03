@@ -7,7 +7,7 @@
 		<script>
 			// FIX: Tests.
 			var normaliseSequence = function(sequence) {
-				return sequence.replace(/\s/g, "");
+				return sequence.replace(/\s/g, "").toUpperCase();
 			};
 
 			var getAminoAcid = function(codon) {
@@ -131,7 +131,7 @@
 
 			var getFrequencyMap = function(frequencies) {
 				var frequencyMap = {};
-				var normalised = frequencies.replace(/U/g, "T");
+				var normalised = frequencies.trim().replace(/U/g, "T");
 				var items = normalised.split(/\([^)]*\)\s*/);
 				items.forEach(function(item) {
 					if (item !== "") {
@@ -198,19 +198,23 @@
 
 	<body>
 	<p>
-		Original sequence:&nbsp;<input id="sequence1" onkeyup="optimise()">
+		Original sequence:<br/>
+		<textarea id="sequence1" cols="100" rows = "10" onkeyup="optimise()"></textarea>
 	</p>
 
 	<p>
-		Amino acids:&nbsp;<input id="aminoAcids">
+		Amino acids:<br/>
+		<textarea id="aminoAcids" cols="100" rows = "5"></textarea>
 	</p>
 
 	<p>
-		Frequencies for optimisation:&nbsp;<input id="frequencies" onkeyup="optimise()">
+		Frequencies for optimisation:<br/>
+		<textarea id="frequencies" cols="100" rows = "10" onkeyup="optimise()"></textarea>
 	</p>
 
 	<p>
-		Optimised sequence:&nbsp;<input id="sequence2">
+		Optimised sequence:<br/>
+		<textarea id="sequence2" cols="100" rows = "10"></textarea>
 	</p>
 
 	</body>
