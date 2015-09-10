@@ -157,6 +157,19 @@
 				return frequencyMap;
 			};
 
+			var printFrequencyMap = function(frequencyMap) {
+				var log = "";
+				for (var key in frequencyMap) {
+					if (frequencyMap.hasOwnProperty(key)) {
+						log += key + "\n";
+						frequencyMap[key].codons.forEach(function(item) {
+							log += "  " + item.codon + ": " + item.frequency + "\n";
+						});
+					}
+				}
+				return log;
+			};
+
 			var getCodon = function(aminoAcid, frequencyMap) {
 				var codons = frequencyMap[aminoAcid].codons;
 				if (codons.length > 0) {
@@ -190,6 +203,7 @@
 				var frequencies = document.getElementById("frequencies").value;
 				if (frequencies !== "") {
 					var frequencyMap = getFrequencyMap(frequencies);
+					document.getElementById("frequencyMap").value = printFrequencyMap(frequencyMap);
 					document.getElementById("sequence2").value = getSequence(aminoAcids, frequencyMap);
 				}
 			};
@@ -213,8 +227,18 @@
 	</p>
 
 	<p>
+		Relative frequencies per amino acid:<br/>
+		<textarea id="frequencyMap" cols="100" rows = "10"></textarea>
+	</p>
+
+	<p>
 		Optimised sequence:<br/>
 		<textarea id="sequence2" cols="100" rows = "10"></textarea>
+	</p>
+
+	<p>
+		Relative frequencies in optimised sequence:<br/>
+		<textarea id="frequencyMap2" cols="100" rows = "10"></textarea>
 	</p>
 
 	</body>
