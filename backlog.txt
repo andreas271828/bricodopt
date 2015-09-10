@@ -1,8 +1,7 @@
-- List codon frequencies (number, percent for amino acid [for both the input table and the result sequence])
-  * Finished for input table
-- Create proper comments and license information
-- Write tests (e.g. compare amino acid sequences or original sequence and optimised sequence)
-- Refactor (extract JavaScript, see FIX comments)
-- Calculate optimal frequencies based on gene expression rates
-- Access databases directly
-- Design
+- Review and fix getFrequencyMapFromSequence.
+- Create proper comments and license information.
+- Write tests (e.g. compare amino acid sequences or original sequence and optimised sequence).
+- Refactor (extract JavaScript, see FIX comments).
+- Calculate optimal frequencies based on gene expression rates.
+- Access databases directly.
+- Create design.

@@ -129,6 +129,20 @@
 				frequencyMap[aminoAcid].sum = frequencyMap[aminoAcid].sum + frequency;
 			};
 
+			var normaliseFrequencyMap = function(frequencyMap) {
+				// FIX: Deep copy frequency map or better build new map in loops.
+				for (var key in frequencyMap) {
+					if (frequencyMap.hasOwnProperty(key)) {
+						if (frequencyMap[key].sum > 0) {
+							frequencyMap[key].codons.forEach(function(item) {
+								item.frequency /= frequencyMap[key].sum;
+							});
+						}
+					}
+				}
+				return frequencyMap;
+			}
+
 			var getFrequencyMap = function(frequencies) {
 				var frequencyMap = {};
 				var normalised = frequencies.trim().replace(/U/g, "T");
@@ -142,19 +156,19 @@
 						addToFrequencyMap(frequencyMap, aminoAcid, codon, frequency);
 					}
 				});
+				return normaliseFrequencyMap(frequencyMap);
+			};
 
-				// Normalise frequency map
-				for (var key in frequencyMap) {
-					if (frequencyMap.hasOwnProperty(key)) {
-						if (frequencyMap[key].sum > 0) {
-							frequencyMap[key].codons.forEach(function(item) {
-								item.frequency /= frequencyMap[key].sum;
-							});
-						}
-					}
+			var getFrequencyMapFromSequence = function(sequence) {
+				var frequencyMap = {};
+				var rest = sequence;
+				while (rest.length >= 3) {
+					var codon = rest.substring(0, 3);
+					var aminoAcid = getAminoAcid(codon);
+					addToFrequencyMap(frequencyMap, aminoAcid, codon, 1);
+					rest = rest.substring(3);
 				}
-
-				return frequencyMap;
+				return normaliseFrequencyMap(frequencyMap);
 			};
 
 			var printFrequencyMap = function(frequencyMap) {
@@ -204,7 +218,10 @@
 				if (frequencies !== "") {
 					var frequencyMap = getFrequencyMap(frequencies);
 					document.getElementById("frequencyMap").value = printFrequencyMap(frequencyMap);
-					document.getElementById("sequence2").value = getSequence(aminoAcids, frequencyMap);
+					var sequence2 = getSequence(aminoAcids, frequencyMap);
+					document.getElementById("sequence2").value = sequence2;
+					var frequencyMap2 = getFrequencyMapFromSequence(sequence2);
+					document.getElementById("frequencyMap2").value = printFrequencyMap(frequencyMap2);
 				}
 			};
 		</script>
