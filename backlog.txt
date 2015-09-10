@@ -1,7 +1,7 @@
-- Review and fix getFrequencyMapFromSequence.
 - Create proper comments and license information.
 - Write tests (e.g. compare amino acid sequences or original sequence and optimised sequence).
 - Refactor (extract JavaScript, see FIX comments).
 - Calculate optimal frequencies based on gene expression rates.
+- Improve optimisation algorithm (a probabilistic algorithm doesn't guarantee the best possible result).
 - Access databases directly.
 - Create design.

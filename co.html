@@ -118,25 +118,31 @@
 			var addToFrequencyMap = function(frequencyMap, aminoAcid, codon, frequency) {
 				if (frequencyMap[aminoAcid] === undefined) {
 					frequencyMap[aminoAcid] = {
-						codons: [],
+						frequencies: {},
 						sum: 0
 					};
 				}
-				frequencyMap[aminoAcid].codons.push({
-					codon: codon,
-					frequency: frequency
-				});
+				var oldFrequency = frequencyMap[aminoAcid].frequencies[codon];
+				if (oldFrequency === undefined) {
+					oldFrequency = 0;
+				}
+				frequencyMap[aminoAcid].frequencies[codon] = oldFrequency + frequency;
 				frequencyMap[aminoAcid].sum = frequencyMap[aminoAcid].sum + frequency;
 			};
 
 			var normaliseFrequencyMap = function(frequencyMap) {
 				// FIX: Deep copy frequency map or better build new map in loops.
-				for (var key in frequencyMap) {
-					if (frequencyMap.hasOwnProperty(key)) {
-						if (frequencyMap[key].sum > 0) {
-							frequencyMap[key].codons.forEach(function(item) {
-								item.frequency /= frequencyMap[key].sum;
-							});
+				// FIX: Make sure that sum === 1 (not slightly less or slightly more).
+				for (var aminoAcid in frequencyMap) {
+					if (frequencyMap.hasOwnProperty(aminoAcid)) {
+						var sum = frequencyMap[aminoAcid].sum;
+						if (sum > 0) {
+							var frequencies = frequencyMap[aminoAcid].frequencies;
+							for (var codon in frequencies) {
+								if (frequencies.hasOwnProperty(codon)) {
+									frequencies[codon] /= sum;
+								}
+							}
 						}
 					}
 				}
@@ -171,31 +177,39 @@
 				return normaliseFrequencyMap(frequencyMap);
 			};
 
-			var printFrequencyMap = function(frequencyMap) {
+			var printFrequencyMap = function(frequencyMap, printCount) {
 				var log = "";
-				for (var key in frequencyMap) {
-					if (frequencyMap.hasOwnProperty(key)) {
-						log += key + "\n";
-						frequencyMap[key].codons.forEach(function(item) {
-							log += "  " + item.codon + ": " + item.frequency + "\n";
-						});
+				for (var aminoAcid in frequencyMap) {
+					if (frequencyMap.hasOwnProperty(aminoAcid)) {
+						log += aminoAcid + "\n";
+						var frequencies = frequencyMap[aminoAcid].frequencies;
+						var sum = frequencyMap[aminoAcid].sum;
+						for (var codon in frequencies) {
+							if (frequencies.hasOwnProperty(codon)) {
+								var frequency = frequencies[codon];
+								if (printCount) {
+									log += "  " + codon + ": " + frequency + " (" + (frequency * sum) + ")\n";
+								} else {
+									log += "  " + codon + ": " + frequency + "\n";
+								}
+							}
+						}
 					}
 				}
 				return log;
 			};
 
 			var getCodon = function(aminoAcid, frequencyMap) {
-				var codons = frequencyMap[aminoAcid].codons;
-				if (codons.length > 0) {
-					var sel = Math.random();
-					var acc = 0;
-					for (var i = 0; i < codons.length - 1; i++) {
-						acc += codons[i].frequency;
+				var sel = Math.random();
+				var acc = 0;
+				var frequencies = frequencyMap[aminoAcid].frequencies;
+				for (var codon in frequencies) {
+					if (frequencies.hasOwnProperty(codon)) {
+						acc += frequencies[codon];
 						if (sel < acc) {
-							return codons[i].codon;
+							return codon;
 						}
 					}
-					return codons[codons.length - 1].codon;
 				}
 				return "???";
 			};
@@ -217,11 +231,11 @@
 				var frequencies = document.getElementById("frequencies").value;
 				if (frequencies !== "") {
 					var frequencyMap = getFrequencyMap(frequencies);
-					document.getElementById("frequencyMap").value = printFrequencyMap(frequencyMap);
+					document.getElementById("frequencyMap").value = printFrequencyMap(frequencyMap, false);
 					var sequence2 = getSequence(aminoAcids, frequencyMap);
 					document.getElementById("sequence2").value = sequence2;
 					var frequencyMap2 = getFrequencyMapFromSequence(sequence2);
-					document.getElementById("frequencyMap2").value = printFrequencyMap(frequencyMap2);
+					document.getElementById("frequencyMap2").value = printFrequencyMap(frequencyMap2, true);
 				}
 			};
 		</script>
