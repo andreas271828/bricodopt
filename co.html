@@ -130,6 +130,35 @@
 				frequencyMap[aminoAcid].sum = frequencyMap[aminoAcid].sum + frequency;
 			};
 
+			var getFrequencies = function(frequencyMap, aminoAcid) {
+				return frequencyMap[aminoAcid] === undefined ? {} : frequencyMap[aminoAcid].frequencies;
+			};
+
+			var getFrequency = function(frequencies, codon) {
+				return frequencies[codon] === undefined ? 0 : frequencies[codon];
+			};
+
+			var forAllCodons = function(frequencies, f) {
+				for (var codon in frequencies) {
+					if (frequencies.hasOwnProperty(codon)) {
+						f(codon);
+					}
+				}
+			};
+
+			var findCodon = function(frequencies, p) {
+				for (var codon in frequencies) {
+					if (frequencies.hasOwnProperty(codon) && p(codon)) {
+						return codon;
+					}
+				}
+				return undefined;
+			};
+
+			var getSum = function(frequencyMap, aminoAcid) {
+				return frequencyMap[aminoAcid] === undefined ? 0 : frequencyMap[aminoAcid].sum;
+			};
+
 			var normaliseFrequencyMap = function(frequencyMap) {
 				// FIX: Deep copy frequency map or better build new map in loops.
 				// FIX: Make sure that sum === 1 (not slightly less or slightly more).
@@ -204,14 +233,41 @@
 					getCodon: function(aminoAcid) {
 						var sel = Math.random();
 						var acc = 0;
-						var frequencies = frequencyMap[aminoAcid].frequencies;
-						for (var codon in frequencies) {
-							if (frequencies.hasOwnProperty(codon)) {
-								acc += frequencies[codon];
-								if (sel < acc) {
-									return codon;
-								}
+						var frequencies = getFrequencies(frequencyMap, aminoAcid);
+						var selCodon = findCodon(frequencies, function(codon) {
+							acc += getFrequency(frequencies, codon);
+							return sel < acc;
+						});
+						return selCodon === undefined ? "???" : selCodon;
+					}
+				};
+			};
+
+			var deterministicSequenceFactory = function(frequencyMap) {
+				var history = {};
+				return {
+					getCodon: function(aminoAcid) {
+						var frequencies = getFrequencies(frequencyMap, aminoAcid);
+						var aminoAcidHistory = getFrequencies(history, aminoAcid);
+						var newSum = getSum(history, aminoAcid) + 1;
+						var minSDist;
+						var selCodon;
+						forAllCodons(frequencies, function(testCodon) {
+							var sDist = 0;
+							forAllCodons(frequencies, function(codon) {
+								var oldCount = getFrequency(aminoAcidHistory, codon);
+								var newCount = codon === testCodon ? oldCount + 1 : oldCount;
+								var delta = newCount / newSum - getFrequency(frequencies, codon);
+								sDist += Math.pow(delta, 2);
+							});
+							if (minSDist === undefined || sDist < minSDist) {
+								minSDist = sDist;
+								selCodon = testCodon;
 							}
+						});
+						if (selCodon !== undefined) {
+							addToFrequencyMap(history, aminoAcid, selCodon, 1);
+							return selCodon;
 						}
 						return "???";
 					}
@@ -236,7 +292,8 @@
 				if (frequencies !== "") {
 					var frequencyMap = getFrequencyMap(frequencies);
 					document.getElementById("frequencyMap").value = printFrequencyMap(frequencyMap, false);
-					var sequenceFactory = probabilisticSequenceFactory(frequencyMap);
+					// var sequenceFactory = probabilisticSequenceFactory(frequencyMap);
+					var sequenceFactory = deterministicSequenceFactory(frequencyMap);
 					var sequence2 = getSequence(aminoAcids, sequenceFactory);
 					document.getElementById("sequence2").value = sequence2;
 					var frequencyMap2 = getFrequencyMapFromSequence(sequence2);
