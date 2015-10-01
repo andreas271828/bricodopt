@@ -1,6 +1,7 @@
-- Create proper comments and license information.
+- Find a fancy name for the program.
 - Write tests (e.g. compare amino acid sequences or original sequence and optimised sequence).
 - Refactor (extract JavaScript, encapsulate functionality [e.g. for frequency map], see FIX comments).
+  Make sure that the copyright and license information is included in each source file.
 - Calculate optimal frequencies based on gene expression rates.
 - Access databases directly.
 - Create design.
