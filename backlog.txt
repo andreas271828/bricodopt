@@ -1,6 +1,8 @@
-- Write tests (e.g. compare amino acid sequences or original sequence and optimised sequence).
-- Refactor (extract JavaScript, encapsulate functionality [e.g. for frequency map], see FIX comments).
-  Make sure that the copyright and license information is included in each source file.
+- Divide bricodopt.js into several files (e.g. sequence code, frequency map code).
+- Test all functions; make functions testable; compare amino acid sequences of original sequence and optimised sequence.
+- Make sure that the copyright and license information is included in each source file.
+- See FIX comments.
+  
 - Calculate optimal frequencies based on gene expression rates.
 - Access databases directly.
 - Create design.
