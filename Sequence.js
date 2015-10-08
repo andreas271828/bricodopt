@@ -1,4 +1,4 @@
-<!--
+/********************************************************************
 Bricodopt
 
 Copyright (C) 2015 Andreas Huemer
@@ -17,20 +17,28 @@ General Public License for more details.
 
 You should have received a copy of the GNU General Public License
 along with this program. If not, see <http://www.gnu.org/licenses/>.
--->
+********************************************************************/
 
-<!DOCTYPE html>
-<html lang="en">
-	<head>
-		<meta charset="utf-8">
-		<title>Test - Bricodopt</title>
-		<link rel="stylesheet" href="http://code.jquery.com/qunit/qunit-1.19.0.css">
-  </head>
+var Sequence = (function() {
+	// FIX: Test.
+	var normalise = function(sequence) {
+		return sequence.replace(/\s/g, "").toUpperCase();
+	};
 
-	<body>
-		<div id="qunit"></div>
+	// FIX: Test.
+	var getAminoAcids = function(sequence) {
+		// FIX: No mutations.
+		var ret = "";
+		var rest = sequence;
+		while (rest.length >= 3) {
+			ret = ret.concat(Codon.getAminoAcid(rest.substring(0, 3)));
+			rest = rest.substring(3);
+		}
+		return ret;
+	};
 
-		<script src="http://code.jquery.com/qunit/qunit-1.19.0.js"></script>
-		<script src="Test.js"></script>
-	</body>
-</html>
+	return {
+		normalise: normalise,
+		getAminoAcids: getAminoAcids
+	};
+})();
