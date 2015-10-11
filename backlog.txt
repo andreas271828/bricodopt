@@ -1,5 +1,5 @@
-- Fix up all function calls (add module); maybe change some function names; maybe move some functions to other modules.
-- Test all functions; make functions testable; compare amino acid sequences of original sequence and optimised sequence.
+- Test all functions; make functions testable; change names, modules and program strcuture to improve code.
+- Test: Compare amino acid sequences of original sequence and optimised sequence.
 - Make sure that the copyright and license information is included in each source file.
 - See FIX comments.
   

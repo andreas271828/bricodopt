@@ -54,16 +54,14 @@ GUA 26.0(   696)  GCA 20.7(   554)  GAA 41.1(  1098)  GGA  8.6(   229)\n\
 GUG  5.6(   149)  GCG  3.3(    88)  GAG  5.7(   152)  GGG  3.7(    99)\
 ";
 
-	var optimise = function() {
-		// FIX: Move to appropriate location.
+	var run = function() {
+		// FIX: Move to appropriate location. Avoid side effects. There should be parameters for where to read from and write to.
 		document.getElementById("sequence1").value = sequence;
 		document.getElementById("frequencies").value = frequencies;
 		Bricodopt.optimise();
 	};
 
 	return {
-		sequence: sequence,
-		frequencies: frequencies,
-		optimise: optimise
+		run: run
 	};
 })();

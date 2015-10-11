@@ -26,9 +26,9 @@ var SequenceFactory = (function() {
 			getCodon: function(aminoAcid) {
 				var sel = Math.random();
 				var acc = 0;
-				var frequencies = getFrequencies(frequencyMap, aminoAcid);
-				var selCodon = findCodon(frequencies, function(codon) {
-					acc += getFrequency(frequencies, codon);
+				var frequencies = FrequencyMap.getFrequencies(frequencyMap, aminoAcid);
+				var selCodon = FrequencyMap.findCodon(frequencies, function(codon) {
+					acc += FrequencyMap.getFrequency(frequencies, codon);
 					return sel < acc;
 				});
 				return selCodon === undefined ? "???" : selCodon;
@@ -41,17 +41,17 @@ var SequenceFactory = (function() {
 		var history = {};
 		return {
 			getCodon: function(aminoAcid) {
-				var frequencies = getFrequencies(frequencyMap, aminoAcid);
-				var aminoAcidHistory = getFrequencies(history, aminoAcid);
-				var newSum = getSum(history, aminoAcid) + 1;
+				var frequencies = FrequencyMap.getFrequencies(frequencyMap, aminoAcid);
+				var aminoAcidHistory = FrequencyMap.getFrequencies(history, aminoAcid);
+				var newSum = FrequencyMap.getSum(history, aminoAcid) + 1;
 				var minSDist;
 				var selCodon;
-				forAllCodons(frequencies, function(testCodon) {
+				FrequencyMap.forAllCodons(frequencies, function(testCodon) {
 					var sDist = 0;
-					forAllCodons(frequencies, function(codon) {
-						var oldCount = getFrequency(aminoAcidHistory, codon);
+					FrequencyMap.forAllCodons(frequencies, function(codon) {
+						var oldCount = FrequencyMap.getFrequency(aminoAcidHistory, codon);
 						var newCount = codon === testCodon ? oldCount + 1 : oldCount;
-						var delta = newCount / newSum - getFrequency(frequencies, codon);
+						var delta = newCount / newSum - FrequencyMap.getFrequency(frequencies, codon);
 						sDist += Math.pow(delta, 2);
 					});
 					if (minSDist === undefined || sDist < minSDist) {
@@ -60,7 +60,7 @@ var SequenceFactory = (function() {
 					}
 				});
 				if (selCodon !== undefined) {
-					addToFrequencyMap(history, aminoAcid, selCodon, 1);
+					FrequencyMap.addToFrequencyMap(history, aminoAcid, selCodon, 1);
 					return selCodon;
 				}
 				return "???";

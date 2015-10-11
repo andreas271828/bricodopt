@@ -150,9 +150,11 @@ var FrequencyMap = (function() {
 		forAllCodons: forAllCodons,
 		findCodon: findCodon,
 		getSum: getSum,
-		normaliseFrequencyMap: normaliseFrequencyMap,
 		getFrequencyMap: getFrequencyMap,
 		getFrequencyMapFromSequence: getFrequencyMapFromSequence,
-		printFrequencyMap: printFrequencyMap
+		printFrequencyMap: printFrequencyMap,
+		private: {
+			normaliseFrequencyMap: normaliseFrequencyMap
+		}
 	};
 })();
