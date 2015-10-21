@@ -20,14 +20,12 @@ along with this program. If not, see <http://www.gnu.org/licenses/>.
 ********************************************************************/
 
 var Sequence = (function() {
-	// FIX: Test.
 	var normalise = function(sequence) {
 		return sequence.replace(/\s/g, "").toUpperCase();
 	};
 
-	// FIX: Test.
 	var getAminoAcids = function(sequence) {
-		// FIX: No mutations.
+		// FIX: No mutations?
 		var ret = "";
 		var rest = sequence;
 		while (rest.length >= 3) {

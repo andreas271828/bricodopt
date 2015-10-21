@@ -19,13 +19,48 @@ You should have received a copy of the GNU General Public License
 along with this program. If not, see <http://www.gnu.org/licenses/>.
 ********************************************************************/
 
-// FIX: Write different tests for different functions and different asserts for different test cases.
-QUnit.test("A", function(assert) {
-  assert.equal("1", "2");
-  assert.equal("3", "4");
+QUnit.test("Sequence.normalise", function(assert) {
+	var check = function(input, expected) {
+		assert.equal(Sequence.normalise(input), expected);
+	}
+
+	check("", "");
+	check("ATGGTGAGCTAA", "ATGGTGAGCTAA");
+	check("ATG GTG AGC TAA", "ATGGTGAGCTAA");
+	check("   ATGGTGAGCTAA   ", "ATGGTGAGCTAA");
+	check("\tATGGTG\tAGCTAA\t", "ATGGTGAGCTAA");
+	check("\nATG GTG\tAGC TAA\n", "ATGGTGAGCTAA");
 });
 
-QUnit.test("B", function(assert) {
-  assert.equal("1", "2");
-  assert.equal("3", "4");
+QUnit.test("Sequence.getAminoAcids", function(assert) {
+	var check = function(input, expected) {
+		assert.equal(Sequence.getAminoAcids(input), expected);
+	}
+
+	check("", "");
+	check("GCTGCCGCAGCG", "AAAA");
+	check("TGTTGC", "CC");
+	check("GATGAC", "DD");
+	check("GAAGAG", "EE");
+	check("TTTTTC", "FF");
+	check("GGTGGCGGAGGG", "GGGG");
+	check("CATCAC", "HH");
+	check("ATTATCATA", "III");
+	check("AAAAAG", "KK");
+	check("TTATTGCTTCTCCTACTG", "LLLLLL");
+	check("ATG", "M");
+	check("AATAAC", "NN");
+	check("CCTCCCCCACCG", "PPPP");
+	check("CAACAG", "QQ");
+	check("CGTCGCCGACGGAGAAGG", "RRRRRR");
+	check("TCTTCCTCATCGAGTAGC", "SSSSSS");
+	check("ACTACCACAACG", "TTTT");
+	check("GTTGTCGTAGTG", "VVVV");
+	check("TGG", "W");
+	check("TATTAC", "YY");
+	check("TAATGATAG", "...");
+	check("XXX", "?");
+	check("XX", "");
+	check("XXXX", "?");
+	check("AACABCAB", "N?");
 });
