@@ -27,14 +27,14 @@ var Bricodopt = (function() {
 		document.getElementById("aminoAcids").value = aminoAcids;
 		var frequencies = document.getElementById("frequencies").value;
 		if (frequencies !== "") {
-			var frequencyMap = FrequencyMap.getFrequencyMap(frequencies);
-			document.getElementById("frequencyMap").value = FrequencyMap.printFrequencyMap(frequencyMap, false);
+			var frequencyMap = FrequencyMap.parse(frequencies);
+			document.getElementById("frequencyMap").value = FrequencyMap.print(frequencyMap, false);
 			// var sequenceFactory = SequenceFactory.probabilisticSequenceFactory(frequencyMap);
 			var sequenceFactory = SequenceFactory.deterministicSequenceFactory(frequencyMap);
 			var sequence2 = SequenceFactory.getSequence(aminoAcids, sequenceFactory);
 			document.getElementById("sequence2").value = sequence2;
-			var frequencyMap2 = FrequencyMap.getFrequencyMapFromSequence(sequence2);
-			document.getElementById("frequencyMap2").value = FrequencyMap.printFrequencyMap(frequencyMap2, true);
+			var frequencyMap2 = FrequencyMap.generateFromSequence(sequence2);
+			document.getElementById("frequencyMap2").value = FrequencyMap.print(frequencyMap2, true);
 		}
 	};
 

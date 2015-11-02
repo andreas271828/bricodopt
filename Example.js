@@ -62,6 +62,8 @@ GUG  5.6(   149)  GCG  3.3(    88)  GAG  5.7(   152)  GGG  3.7(    99)\
 	};
 
 	return {
+		sequence: sequence,
+		frequencies: frequencies,
 		run: run
 	};
 })();

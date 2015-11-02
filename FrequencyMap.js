@@ -19,79 +19,45 @@ You should have received a copy of the GNU General Public License
 along with this program. If not, see <http://www.gnu.org/licenses/>.
 ********************************************************************/
 
+// FIX: Change module to a structure similar to Frequencies, where no variables are mutated.
+// FIX: Test all functions.
+// FIX: Improve the code of this module further and make it nice and functional and composable.
+
 var FrequencyMap = (function() {
-	// FIX: Test.
 	var addToFrequencyMap = function(frequencyMap, aminoAcid, codon, frequency) {
-		if (frequencyMap[aminoAcid] === undefined) {
-			frequencyMap[aminoAcid] = {
-				frequencies: {},
-				sum: 0
-			};
-		}
-		var oldFrequency = frequencyMap[aminoAcid].frequencies[codon];
-		if (oldFrequency === undefined) {
-			oldFrequency = 0;
-		}
-		frequencyMap[aminoAcid].frequencies[codon] = oldFrequency + frequency;
-		frequencyMap[aminoAcid].sum = frequencyMap[aminoAcid].sum + frequency;
+		frequencyMap[aminoAcid] = Frequencies.add(frequencyMap[aminoAcid], codon, frequency);
 	};
 
-	// FIX: Test.
-	var getFrequencies = function(frequencyMap, aminoAcid) {
-		return frequencyMap[aminoAcid] === undefined ? {} : frequencyMap[aminoAcid].frequencies;
-	};
-
-	// FIX: Test.
-	var getFrequency = function(frequencies, codon) {
-		return frequencies[codon] === undefined ? 0 : frequencies[codon];
-	};
-
-	// FIX: Test.
-	var forAllCodons = function(frequencies, f) {
-		for (var codon in frequencies) {
-			if (frequencies.hasOwnProperty(codon)) {
-				f(codon);
-			}
-		}
-	};
-
-	// FIX: Test.
-	var findCodon = function(frequencies, p) {
-		for (var codon in frequencies) {
-			if (frequencies.hasOwnProperty(codon) && p(codon)) {
-				return codon;
-			}
-		}
-		return undefined;
-	};
-
-	// FIX: Test.
-	var getSum = function(frequencyMap, aminoAcid) {
-		return frequencyMap[aminoAcid] === undefined ? 0 : frequencyMap[aminoAcid].sum;
-	};
-
-	// FIX: Test.
-	var normaliseFrequencyMap = function(frequencyMap) {
-		// FIX: Deep copy frequency map or better build new map in loops.
-		// FIX: Make sure that sum === 1 (not slightly less or slightly more).
-		for (var aminoAcid in frequencyMap) {
-			if (frequencyMap.hasOwnProperty(aminoAcid)) {
-				var sum = frequencyMap[aminoAcid].sum;
-				if (sum > 0) {
-					var frequencies = frequencyMap[aminoAcid].frequencies;
-					for (var codon in frequencies) {
-						if (frequencies.hasOwnProperty(codon)) {
-							frequencies[codon] /= sum;
-						}
-					}
-				}
-			}
+	var generateFromSequence = function(sequence) {
+		var frequencyMap = {};
+		var rest = sequence;
+		while (rest.length >= 3) {
+			var codon = rest.substring(0, 3);
+			var aminoAcid = Codon.getAminoAcid(codon);
+			addToFrequencyMap(frequencyMap, aminoAcid, codon, 1);
+			rest = rest.substring(3);
 		}
 		return frequencyMap;
-	}
+	};
 
-	// FIX: Test.
-	var getFrequencyMap = function(frequencies) {
+	var getFrequencies = function(frequencyMap, aminoAcid) {
+		return frequencyMap[aminoAcid];
+	};
+
+	var normalise = function(frequencyMap) {
+		var newFrequencyMap = {};
+
+		for (var aminoAcid in frequencyMap) {
+			if (frequencyMap.hasOwnProperty(aminoAcid)) {
+				newFrequencyMap[aminoAcid] = Frequencies.normalise(frequencyMap[aminoAcid]);
+			}
+		}
+
+		return newFrequencyMap;
+	};
+
+	// Generate normalised frequency map from codon usage tables as found at http://www.kazusa.or.jp/codon/.
+	var parse = function(frequencies) {
 		var frequencyMap = {};
 		var normalised = frequencies.trim().replace(/U/g, "T");
 		var items = normalised.split(/\([^)]*\)\s*/);
@@ -104,40 +70,25 @@ var FrequencyMap = (function() {
 				addToFrequencyMap(frequencyMap, aminoAcid, codon, frequency);
 			}
 		});
-		return normaliseFrequencyMap(frequencyMap);
+		return normalise(frequencyMap);
 	};
 
-	// FIX: Test.
-	var getFrequencyMapFromSequence = function(sequence) {
-		var frequencyMap = {};
-		var rest = sequence;
-		while (rest.length >= 3) {
-			var codon = rest.substring(0, 3);
-			var aminoAcid = Codon.getAminoAcid(codon);
-			addToFrequencyMap(frequencyMap, aminoAcid, codon, 1);
-			rest = rest.substring(3);
-		}
-		return normaliseFrequencyMap(frequencyMap);
-	};
-
-	// FIX: Test.
-	var printFrequencyMap = function(frequencyMap, printCount) {
+	var print = function(frequencyMap, relAndAbs) {
 		var log = "";
 		for (var aminoAcid in frequencyMap) {
 			if (frequencyMap.hasOwnProperty(aminoAcid)) {
 				log += aminoAcid + "\n";
-				var frequencies = frequencyMap[aminoAcid].frequencies;
-				var sum = frequencyMap[aminoAcid].sum;
-				for (var codon in frequencies) {
-					if (frequencies.hasOwnProperty(codon)) {
-						var frequency = frequencies[codon];
-						if (printCount) {
-							log += "  " + codon + ": " + frequency + " (" + (frequency * sum) + ")\n";
-						} else {
-							log += "  " + codon + ": " + frequency + "\n";
-						}
+				var frequencies = frequencyMap[aminoAcid];
+				var sum = Frequencies.sum(frequencies);
+				Frequencies.forAllCodons(frequencies, function(codon) {
+					var frequency = Frequencies.getFrequency(frequencies, codon);
+					if (relAndAbs) {
+						var relFrequency = frequency / sum;
+						log += "  " + codon + ": " + relFrequency + " (" + frequency + ")\n";
+					} else {
+						log += "  " + codon + ": " + frequency + "\n";
 					}
-				}
+				});
 			}
 		}
 		return log;
@@ -145,16 +96,10 @@ var FrequencyMap = (function() {
 
 	return {
 		addToFrequencyMap: addToFrequencyMap,
+		generateFromSequence: generateFromSequence,
 		getFrequencies: getFrequencies,
-		getFrequency: getFrequency,
-		forAllCodons: forAllCodons,
-		findCodon: findCodon,
-		getSum: getSum,
-		getFrequencyMap: getFrequencyMap,
-		getFrequencyMapFromSequence: getFrequencyMapFromSequence,
-		printFrequencyMap: printFrequencyMap,
-		private: {
-			normaliseFrequencyMap: normaliseFrequencyMap
-		}
+		normalise: normalise,
+		parse: parse,
+		print: print
 	};
 })();

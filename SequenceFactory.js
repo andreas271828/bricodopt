@@ -19,16 +19,17 @@ You should have received a copy of the GNU General Public License
 along with this program. If not, see <http://www.gnu.org/licenses/>.
 ********************************************************************/
 
+// FIX: Improve code and test all functions.
+
 var SequenceFactory = (function() {
-	// FIX: Test.
 	var probabilisticSequenceFactory = function(frequencyMap) {
 		return {
 			getCodon: function(aminoAcid) {
 				var sel = Math.random();
 				var acc = 0;
 				var frequencies = FrequencyMap.getFrequencies(frequencyMap, aminoAcid);
-				var selCodon = FrequencyMap.findCodon(frequencies, function(codon) {
-					acc += FrequencyMap.getFrequency(frequencies, codon);
+				var selCodon = Frequencies.findCodon(frequencies, function(codon) {
+					acc += Frequencies.getFrequency(frequencies, codon);
 					return sel < acc;
 				});
 				return selCodon === undefined ? "???" : selCodon;
@@ -36,22 +37,21 @@ var SequenceFactory = (function() {
 		};
 	};
 
-	// FIX: Test.
 	var deterministicSequenceFactory = function(frequencyMap) {
 		var history = {};
 		return {
 			getCodon: function(aminoAcid) {
 				var frequencies = FrequencyMap.getFrequencies(frequencyMap, aminoAcid);
 				var aminoAcidHistory = FrequencyMap.getFrequencies(history, aminoAcid);
-				var newSum = FrequencyMap.getSum(history, aminoAcid) + 1;
+				var newSum = Frequencies.sum(aminoAcidHistory) + 1;
 				var minSDist;
 				var selCodon;
-				FrequencyMap.forAllCodons(frequencies, function(testCodon) {
+				Frequencies.forAllCodons(frequencies, function(testCodon) {
 					var sDist = 0;
-					FrequencyMap.forAllCodons(frequencies, function(codon) {
-						var oldCount = FrequencyMap.getFrequency(aminoAcidHistory, codon);
+					Frequencies.forAllCodons(frequencies, function(codon) {
+						var oldCount = Frequencies.getFrequency(aminoAcidHistory, codon);
 						var newCount = codon === testCodon ? oldCount + 1 : oldCount;
-						var delta = newCount / newSum - FrequencyMap.getFrequency(frequencies, codon);
+						var delta = newCount / newSum - Frequencies.getFrequency(frequencies, codon);
 						sDist += Math.pow(delta, 2);
 					});
 					if (minSDist === undefined || sDist < minSDist) {
@@ -68,9 +68,7 @@ var SequenceFactory = (function() {
 		};
 	};
 
-	// FIX: Test.
 	var getSequence = function(aminoAcids, sequenceFactory) {
-		// FIX: No mutations.
 		var ret = "";
 		for (var i = 0; i < aminoAcids.length; i++) {
 			ret = ret.concat(sequenceFactory.getCodon(aminoAcids.charAt(i)));

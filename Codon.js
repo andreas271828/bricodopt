@@ -22,7 +22,6 @@ along with this program. If not, see <http://www.gnu.org/licenses/>.
 var Codon = (function() {
 	var getAminoAcid = function(codon) {
 		// https://en.wikipedia.org/wiki/DNA_codon_table
-		// FIX: Better format (e.g. compressed format)?
 		switch (codon) {
 			case "GCT":
 			case "GCC":

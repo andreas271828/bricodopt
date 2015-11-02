@@ -25,7 +25,6 @@ var Sequence = (function() {
 	};
 
 	var getAminoAcids = function(sequence) {
-		// FIX: No mutations?
 		var ret = "";
 		var rest = sequence;
 		while (rest.length >= 3) {

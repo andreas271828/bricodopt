@@ -1,8 +1,0 @@
-- Test all functions; make functions testable; change names, modules and program structure to improve code.
-- Test: Compare amino acid sequences of original sequence and optimised sequence (random sequences?).
-- Make sure that the copyright and license information is included in each source file.
-- See FIX comments.
-  
-- Calculate optimal frequencies based on gene expression rates.
-- Access databases directly.
-- Create design.
